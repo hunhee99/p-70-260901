@@ -4,8 +4,10 @@ import com.back.p67260811.domain.member.entity.Member;
 import com.back.p67260811.domain.member.service.MemberService;
 import com.back.p67260811.domain.post.post.dto.PostDto;
 import com.back.p67260811.domain.post.post.entity.Post;
+import com.back.p67260811.domain.post.post.exception.MissMatchPasswordException;
 import com.back.p67260811.domain.post.post.service.PostService;
 import com.back.p67260811.global.dto.RsData;
+import com.back.p67260811.global.exception.ServiceException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -61,9 +63,18 @@ public class ApiV1PostController {
     @PostMapping
     @Transactional
     public RsData<PostDto> write(
-            @Valid @RequestBody PostWriteReqBody reqBody
+            @Valid @RequestBody PostWriteReqBody reqBody,
+            @RequestParam String username,
+            @RequestParam String password
     ) {
-        Member actor = memberService.findByUsername("user1").get();
+        Member actor = memberService.findByUsername(username).get();
+
+        if (!actor.getPassword().equals(password)){
+            throw new ServiceException(
+                    "401-1",
+                    "비밀번호가 일치하지 않습니다."
+            );
+        }
 
         Post post = postService.write(actor, reqBody.title, reqBody.content);
         return new RsData<>(

@@ -1,6 +1,7 @@
 package com.back.p67260811.global.exceptionHandler;
 
 import com.back.p67260811.global.dto.RsData;
+import com.back.p67260811.global.exception.ServiceException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -52,7 +53,14 @@ public class GlobalExceptionHandler {
         );
     }
 
-
+    @ExceptionHandler(ServiceException.class)
+    @ResponseBody
+    public RsData<Void> handleException(ServiceException e) {
+        return new RsData<Void>(
+                e.getResultCode(),
+                e.getMsg()
+        );
+    }
 
 
 }
