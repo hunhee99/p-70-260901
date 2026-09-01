@@ -64,6 +64,7 @@ public class ApiV1PostController {
             @Valid @RequestBody PostWriteReqBody reqBody
     ) {
         Member actor = memberService.findByUsername("user1").get();
+
         Post post = postService.write(actor, reqBody.title, reqBody.content);
         return new RsData<>(
                 "201-1",
@@ -109,5 +110,5 @@ public class ApiV1PostController {
                 "%d번 게시물이 삭제되었습니다.".formatted(id)
         );
     }
-    
+
 }
