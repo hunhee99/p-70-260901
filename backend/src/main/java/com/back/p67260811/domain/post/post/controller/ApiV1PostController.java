@@ -1,5 +1,7 @@
 package com.back.p67260811.domain.post.post.controller;
 
+import com.back.p67260811.domain.member.entity.Member;
+import com.back.p67260811.domain.member.service.MemberService;
 import com.back.p67260811.domain.post.post.dto.PostDto;
 import com.back.p67260811.domain.post.post.entity.Post;
 import com.back.p67260811.domain.post.post.service.PostService;
@@ -20,6 +22,7 @@ import java.util.List;
 public class ApiV1PostController {
 
     private final PostService postService;
+    private final MemberService memberService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostDto> list() {
@@ -60,7 +63,8 @@ public class ApiV1PostController {
     public RsData<PostDto> write(
             @Valid @RequestBody PostWriteReqBody reqBody
     ) {
-        Post post = postService.write(reqBody.title, reqBody.content);
+        Member actor = memberService.findByUsername("user1").get();
+        Post post = postService.write(actor, reqBody.title, reqBody.content);
         return new RsData<>(
                 "201-1",
                 "%d번 글이 성공적으로 등록되었습니다".formatted(post.getId()),
@@ -105,4 +109,5 @@ public class ApiV1PostController {
                 "%d번 게시물이 삭제되었습니다.".formatted(id)
         );
     }
+    
 }

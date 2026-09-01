@@ -1,5 +1,6 @@
 package com.back.p67260811.domain.post.post.service;
 
+import com.back.p67260811.domain.member.entity.Member;
 import com.back.p67260811.domain.post.comment.entity.PostComment;
 import com.back.p67260811.domain.post.post.entity.Post;
 import com.back.p67260811.domain.post.post.repository.PostRepository;
@@ -15,8 +16,8 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    public Post write(String title, String content) {
-        Post post = new Post(title, content);
+    public Post write(Member author, String title, String content) {
+        Post post = new Post(author, title, content);
         return postRepository.save(post);
     }
 
