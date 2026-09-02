@@ -15,7 +15,7 @@ public record MemberDto(
                 member.getId(),
                 member.getCreateDate(),
                 member.getModifyDate(),
-                member.getUsername()
+                member.getNickname()
         );
     }
 }
