@@ -75,7 +75,7 @@ public class ApiV1PostControllerTest {
 
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/posts?apiKey=" + actorApiKey)
+                        post("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer user2")
                                 .content("""
@@ -114,6 +114,7 @@ public class ApiV1PostControllerTest {
         ResultActions resultActions = mvc
                 .perform(
                         patch("/api/v1/posts/%d".formatted(targetId))
+                                .header("Authorization", "Bearer user1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -175,6 +176,7 @@ public class ApiV1PostControllerTest {
         ResultActions resultActions = mvc
                 .perform(
                         delete("/api/v1/posts/%d".formatted(targetId))
+                                .header("Authorization", "Bearer user1")
                 )
                 .andDo(print());
 
@@ -201,12 +203,14 @@ public class ApiV1PostControllerTest {
                 .perform(
                         post("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer user1")
                                 .content("""
                                         {
                                             "title": "%s",
                                             "content": "%s"
                                         }
-                                        """.formatted(title, content))
+                                        """.formatted(title, content)
+                                )
                 )
                 .andDo(print());
 
@@ -232,6 +236,7 @@ public class ApiV1PostControllerTest {
                 .perform(
                         post("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer user1")
                                 .content("""
                                         {
                                             "title": "%s",
