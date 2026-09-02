@@ -28,6 +28,16 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    // 테스트용
+    public Member join(String username, String password, String nickname, String apiKey) {
+        findByUsername(username).ifPresent((member) -> {
+            throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
+        });
+
+        Member member = new Member(username, password, nickname, apiKey);
+        return memberRepository.save(member);
+    }
+
     public Optional<Member> findByUsername(String username) {
         return memberRepository.findByUsername(username);
     }

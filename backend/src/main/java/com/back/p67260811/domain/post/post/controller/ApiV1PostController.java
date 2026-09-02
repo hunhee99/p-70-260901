@@ -69,7 +69,7 @@ public class ApiV1PostController {
 
         String authorization = apiKey.substring(7);
 
-        Member actor = memberService.findByApiKey(apiKey).orElseThrow(() -> new ServiceException(
+        Member actor = memberService.findByApiKey(authorization).orElseThrow(() -> new ServiceException(
                 "401-1",
                 "Api Key가 유효하지 않습니다."
                 ));
