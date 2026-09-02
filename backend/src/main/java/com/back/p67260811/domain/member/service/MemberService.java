@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Dictionary;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,10 @@ public class MemberService {
 
     // 테스트용
     public Member join(String username, String password, String nickname, String apiKey) {
+        if(apiKey == null) {
+            apiKey = UUID.randomUUID().toString();
+        }
+
         findByUsername(username).ifPresent((member) -> {
             throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
         });
