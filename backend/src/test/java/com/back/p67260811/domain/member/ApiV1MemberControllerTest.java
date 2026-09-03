@@ -5,6 +5,7 @@ import com.back.p67260811.domain.member.entity.Member;
 import com.back.p67260811.domain.member.repository.MemberRepository;
 import com.back.p67260811.domain.member.service.MemberService;
 import com.back.p67260811.global.dto.RsData;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -140,5 +142,47 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.data.memberDto.createDate").exists())
                 .andExpect(jsonPath("$.data.memberDto.modifyDate").exists())
                 .andExpect(jsonPath("$.data.memberDto.name").value(member.getNickname()));
+
+
+        resultActions.andExpect(
+                result -> {
+                    Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+
+                    assertThat(apiKeyCookie).isNotNull();
+
+                    if(apiKeyCookie != null) {
+                        assertThat(apiKeyCookie.getValue()).isNotBlank();
+                    }
+                }
+        );
+    }
+
+
+    @Test
+    @DisplayName("내 정보")
+    void t4() throws Exception {
+        Member actor = memberRepository.findByUsername("user1").get();
+        String actorApiKey = actor.getApiKey();
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/members/me")
+                        .header("Authorization", "Bearer " + actorApiKey)
+                )
+                .andDo(print());
+
+        Member member = memberRepository.findByUsername("user1").get();
+
+        resultActions
+                .andExpect(handler().handlerType(ApiV1MemberController.class))
+                .andExpect(handler().methodName("me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("OK"))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.id").value(member.getId()))
+                .andExpect(jsonPath("$.data.createDate").exists())
+                .andExpect(jsonPath("$.data.modifyDate").exists())
+                .andExpect(jsonPath("$.data.name").value(member.getNickname()));
     }
 }

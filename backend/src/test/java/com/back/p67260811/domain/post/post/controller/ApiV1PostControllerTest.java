@@ -1,6 +1,7 @@
 package com.back.p67260811.domain.post.post.controller;
 
 import com.back.p67260811.domain.member.entity.Member;
+import com.back.p67260811.domain.member.repository.MemberRepository;
 import com.back.p67260811.domain.member.service.MemberService;
 import com.back.p67260811.domain.post.post.entity.Post;
 import com.back.p67260811.domain.post.post.repository.PostRepository;
@@ -35,6 +36,9 @@ public class ApiV1PostControllerTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("글 다건 조회")
@@ -194,35 +198,31 @@ public class ApiV1PostControllerTest {
     }
 
     @Test
-    @DisplayName("글 작성, 제목이 입력되지 않은 경우")
-    void t6() throws Exception {
-        String title = "";
+    @DisplayName("글 작성, 인증 헤더 정보가 없을 때")    void t6() throws Exception {
+        String title = "제목입니다";
         String content = "내용입니다";
+
+        Member author = memberRepository.findByUsername("user1").get();
 
         ResultActions resultActions = mvc
                 .perform(
                         post("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", "Bearer user1")
                                 .content("""
                                         {
                                             "title": "%s",
                                             "content": "%s"
                                         }
-                                        """.formatted(title, content)
-                                )
+                                        """.formatted(title, content))
                 )
                 .andDo(print());
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1PostController.class))
                 .andExpect(handler().methodName("write"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.resultCode").value("400-1"))
-                .andExpect(jsonPath("$.msg").value("title-NotBlank-제목을 입력해주세요.\ntitle-Size-제목은 2글자 이상 10글자 이하로 작성해주세요."));
-
-
-
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.resultCode").value("401-1"))
+                .andExpect(jsonPath("$.msg").value("헤더에 인증 정보가 없습니다."));
     }
 
 
