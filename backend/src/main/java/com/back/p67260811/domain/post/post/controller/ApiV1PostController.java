@@ -95,15 +95,8 @@ public class ApiV1PostController {
             @Valid @RequestBody PostModifyReqBody reqBody
     ) {
         Member actor = rq.getActor();
-
         Post post = postService.findById(id).get();
-
-        if (!actor.equals(post.getAuthor())) {
-            throw new ServiceException(
-                    "403-1",
-                    "수정 권한이 없습니다."
-            );
-        }
+        post.checkActorModify(actor);   // 권한 체크
 
         postService.modify(post, reqBody.title, reqBody.content);
 
@@ -118,11 +111,8 @@ public class ApiV1PostController {
             @PathVariable int id
     ) {
         Member actor = rq.getActor();
-
         Post post = postService.findById(id).get();
-
-
-        if(!actor.equals(post.getAuthor())) throw new ServiceException("403-1", "삭제 권한이 없습니다.");
+        post.checkActorDelete(actor);   // 권한 체크
 
         postService.delete(id);
 
