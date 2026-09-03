@@ -78,8 +78,7 @@ public class ApiV1MemberController {
 
     @PostMapping("/login")
     public RsData<MemberDto> login(
-            @RequestBody @Valid LoginReqBody reqBody,
-            HttpServletResponse response
+            @RequestBody @Valid LoginReqBody reqBody
     ) {
 
         // 1. 회원 존재 여부
@@ -95,9 +94,7 @@ public class ApiV1MemberController {
         // 3. 비밀번호가 일치하면 인증 데이터(apiKey) 제공
 
         // 4. apiKey 쿠키 생성하고 전송
-        response.addCookie(
-                new Cookie("apiKey", actor.getApiKey())
-        );
+        rq.addCookie("apiKey", actor.getApiKey());
 
 
         return new RsData(
