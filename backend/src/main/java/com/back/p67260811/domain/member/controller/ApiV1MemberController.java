@@ -107,6 +107,7 @@ public class ApiV1MemberController {
         );
     }
 
+    // 내 정보
     @GetMapping("/me")
     public RsData<MemberDto> me() {
         Member actor = rq.getActor();
@@ -115,6 +116,18 @@ public class ApiV1MemberController {
                 "200-1",
                 "OK",
                 new MemberDto(actor)
+        );
+    }
+
+    // 로그아웃
+    @DeleteMapping("/logout")
+    public RsData<Void> logout() {
+
+        rq.deleteCookie("apiKey");
+
+        return new RsData<>(
+                "200-1",
+                "로그아웃 되었습니다."
         );
     }
 }

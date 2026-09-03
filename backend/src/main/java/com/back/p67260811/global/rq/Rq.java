@@ -63,4 +63,17 @@ public class Rq {
 
         response.addCookie(cookie);
     }
+
+    // 로그아웃
+    public void deleteCookie(String name) {
+
+        Cookie cookie = new Cookie(name, "");
+        cookie.setHttpOnly(true);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);    // 유효 기간을 0으로 설정
+
+        response.addCookie(cookie);
+
+    }
 }
