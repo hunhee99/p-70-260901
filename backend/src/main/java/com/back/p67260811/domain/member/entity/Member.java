@@ -20,6 +20,7 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
+    // 나중에 활용
     @Column(unique = true)
     private String apiKey;
 
