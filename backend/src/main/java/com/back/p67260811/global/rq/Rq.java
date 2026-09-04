@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,16 +26,20 @@ public class Rq {
 
         String headerAuthorization = getHeader("Authorization", "");
 
-        String apiKey = null;
-        String accessToken = null;
+        String apiKey = "";
+        String accessToken = "";
 
-        if(headerAuthorization.isBlank()) {
-
+        if(!headerAuthorization.isBlank()) {
             if (!headerAuthorization.startsWith("Bearer ")) {
                 throw new ServiceException("401-2", "헤더의 인증 정보 형식이 올바르지 않습니다.");
             }
 
             String[] headerAuthorizationBits = headerAuthorization.split(" ", 3);
+
+            if (headerAuthorizationBits.length < 2 || headerAuthorizationBits[1].isBlank()) {
+                throw new ServiceException("401-2", "헤더의 인증 정보 형식이 올바르지 않습니다.");
+            }
+
 
             apiKey = headerAuthorizationBits[1];
             accessToken = headerAuthorizationBits.length == 3 ? headerAuthorizationBits[2] : "";
@@ -48,15 +51,14 @@ public class Rq {
             }
 
             for(Cookie cookie : cookies) {
-                if(cookie.getName().equals("apiKey")) {
-                    apiKey = cookie.getValue();
-                    break;
+                switch (cookie.getName()) {
+                    case "apiKey" -> apiKey = cookie.getValue();
+                    case "accessToken" -> accessToken = cookie.getValue();
                 }
             }
         }
 
-        if (apiKey.isBlank())
-            throw new ServiceException("401-1", "로그인 후 이용해주세요.");
+
 
         Member member = null;
 
@@ -71,6 +73,9 @@ public class Rq {
         }
 
         if (member == null) {
+            if (apiKey.isBlank()){
+                throw new ServiceException("401-1", "로그인 후 이용해주세요.");
+            }
             member = memberService
                     .findByApiKey(apiKey)
                     .orElseThrow(() -> new ServiceException("401-3", "API 키가 유효하지 않습니다."));
