@@ -222,7 +222,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("write"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-1"))
-                .andExpect(jsonPath("$.msg").value("헤더에 인증 정보가 없습니다."));
+                .andExpect(jsonPath("$.msg").value("인증 정보가 없습니다."));
     }
 
 

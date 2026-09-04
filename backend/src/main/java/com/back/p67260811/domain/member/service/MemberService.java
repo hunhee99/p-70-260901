@@ -15,6 +15,7 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final AuthTokenService authTokenService;
 
     public long count() {
         return memberRepository.count();
@@ -49,5 +50,9 @@ public class MemberService {
 
     public Optional<Member> findByApiKey(String apikey) {
         return memberRepository.findByApiKey(apikey);
+    }
+
+    public String genAccessToken(Member member) {
+        return authTokenService.genAccessToken(member);
     }
 }

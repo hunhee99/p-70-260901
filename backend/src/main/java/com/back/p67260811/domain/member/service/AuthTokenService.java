@@ -17,7 +17,7 @@ public class AuthTokenService {
     private long expireMills;
 
 
-    public String genAccessToken(Member member) {
+    String genAccessToken(Member member) {
         return Ut.jwt.toString(
                 secretPattern,
                 expireMills,
@@ -25,7 +25,7 @@ public class AuthTokenService {
         );
     }
 
-    public Map<String, Object> payloadOrNull(String jwt) {
+    Map<String, Object> payloadOrNull(String jwt) {
         Map<String, Object> payload = Ut.jwt.payloadOrNull(jwt, secretPattern);
 
         if(payload == null) {
