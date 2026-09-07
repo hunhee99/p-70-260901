@@ -20,7 +20,7 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
-    // 나중에 활용
+    // 나중에 활용 -> 리프레시 토큰
     @Column(unique = true)
     private String apiKey;
 
