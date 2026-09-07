@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,26 +40,17 @@ public class Rq {
             if (headerAuthorizationBits.length < 2 || headerAuthorizationBits[1].isBlank()) {
                 throw new ServiceException("401-2", "헤더의 인증 정보 형식이 올바르지 않습니다.");
             }
-
-
+            
             apiKey = headerAuthorizationBits[1];
             accessToken = headerAuthorizationBits.length == 3 ? headerAuthorizationBits[2] : "";
         } else {
-            Cookie[] cookies = request.getCookies();
-
-            if(cookies == null) {
-                throw new ServiceException("401-1", "인증 정보가 없습니다.");
-            }
-
-            for(Cookie cookie : cookies) {
-                switch (cookie.getName()) {
-                    case "apiKey" -> apiKey = cookie.getValue();
-                    case "accessToken" -> accessToken = cookie.getValue();
-                }
-            }
+            apiKey = getCookieValue("apiKey", "");
+            accessToken = getCookieValue("accessToken", "");
         }
 
-
+        if (apiKey.isBlank()){
+            throw new ServiceException("401-1", "로그인 후 이용해주세요.");
+        }
 
         Member member = null;
 
@@ -73,9 +65,6 @@ public class Rq {
         }
 
         if (member == null) {
-            if (apiKey.isBlank()){
-                throw new ServiceException("401-1", "로그인 후 이용해주세요.");
-            }
             member = memberService
                     .findByApiKey(apiKey)
                     .orElseThrow(() -> new ServiceException("401-3", "API 키가 유효하지 않습니다."));
@@ -113,4 +102,17 @@ public class Rq {
                 .orElse(defaultValue);
     }
 
+    private String getCookieValue(String name, String defaultValue) {
+        return Optional
+                .ofNullable(request.getCookies())
+                .flatMap(
+                        cookies ->
+                                Arrays.stream(cookies)
+                                        .filter(cookie -> cookie.getName().equals(name))
+                                        .map(Cookie::getValue)
+                                        .filter(value -> !value.isBlank())
+                                        .findFirst()
+                )
+                .orElse(defaultValue);
+    }
 }
