@@ -36,6 +36,7 @@ public class ApiV1AdmMemberControllerTest {
         ResultActions resultActions = mvc
                 .perform(
                         get("/api/v1/adm/members")
+                                .cookie(new Cookie("apiKey", "admin"))
                 )
                 .andDo(print());
 

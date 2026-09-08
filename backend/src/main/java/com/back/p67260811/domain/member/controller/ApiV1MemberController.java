@@ -91,9 +91,7 @@ public class ApiV1MemberController {
         );
 
         // 2. 존재하면 비밀 번호 체크
-        if(!actor.getPassword().equals(reqBody.password)) {
-            throw new ServiceException("401-2", "비밀번호가 일치하지 않습니다.");
-        }
+        memberService.checkPassword(reqBody.password, actor.getPassword());
 
         // 3. 비밀번호가 일치하면 인증 데이터(apiKey) 제공
 
