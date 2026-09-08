@@ -92,9 +92,6 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             rq.setHeader("accessToken", newAccessToken);
         }
 
-
-
-
         filterChain.doFilter(request, response);
     }
 }
