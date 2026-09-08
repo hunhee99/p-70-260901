@@ -232,7 +232,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("write"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-1"))
-                .andExpect(jsonPath("$.msg").value("로그인 후 이용해주세요."));
+                .andExpect(jsonPath("$.msg").value("API 키 정보가 존재하지 않습니다."));
     }
 
 
@@ -274,7 +274,11 @@ public class ApiV1PostControllerTest {
         String accessToken = Ut.jwt.toString(
                 secretPattern,
                 expireSeconds,
-                Map.of("id", author.getId(), "username", author.getUsername())
+                Map.of(
+                        "id", author.getId(),
+                        "username", author.getUsername(),
+                        "nickname", author.getNickname()
+                )
         );
 
         ResultActions resultActions = mvc

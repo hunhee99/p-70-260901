@@ -70,8 +70,10 @@ public class ApiV1PostController {
             @Valid @RequestBody PostWriteReqBody reqBody
     ) {
         Member actor = rq.getActor();
+        Member realActor = this.memberService.findById(actor.getId()).get();
 
-        Post post = postService.write(actor, reqBody.title, reqBody.content);
+        Post post = postService.write(realActor, reqBody.title, reqBody.content);
+
         return new RsData<>(
                 "201-1",
                 "%d번 글이 성공적으로 등록되었습니다".formatted(post.getId()),
