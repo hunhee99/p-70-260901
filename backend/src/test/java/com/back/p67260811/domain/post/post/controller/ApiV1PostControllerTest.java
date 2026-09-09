@@ -6,6 +6,7 @@ import com.back.p67260811.domain.member.service.MemberService;
 import com.back.p67260811.domain.post.post.entity.Post;
 import com.back.p67260811.domain.post.post.repository.PostRepository;
 import com.back.p67260811.standard.Ut;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,7 +209,7 @@ public class ApiV1PostControllerTest {
         String title = "제목입니다";
         String content = "내용입니다";
 
-        Member author = memberRepository.findByUsername("user1").get();
+        Member actor = memberRepository.findByUsername("user1").get();
 
         ResultActions resultActions = mvc
                 .perform(
@@ -220,6 +221,7 @@ public class ApiV1PostControllerTest {
                                             "content": "%s"
                                         }
                                         """.formatted(title, content))
+                                .cookie(new Cookie("apiKey", actor.getApiKey()))
                 )
                 .andDo(print());
 
@@ -301,6 +303,7 @@ public class ApiV1PostControllerTest {
     void t9() throws Exception {
         String title = "제목입니다.";
         String content = "내용입니다";
+        Member actor = memberRepository.findByUsername("user1").get();
 
         ResultActions resultActions = mvc
                 .perform(
@@ -312,6 +315,7 @@ public class ApiV1PostControllerTest {
                                             "content": "%s"
                                         
                                         """.formatted(title, content))
+                                .cookie(new Cookie("apiKey", actor.getApiKey()))
                 )
                 .andDo(print());
 
