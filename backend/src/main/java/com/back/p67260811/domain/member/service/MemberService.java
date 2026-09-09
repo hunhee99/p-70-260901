@@ -22,23 +22,18 @@ public class MemberService {
     }
 
     public Member join(String username, String password, String nickname) {
-        findByUsername(username).ifPresent((member) -> {
-            throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
-        });
-
-        Member member = new Member(username, passwordEncoder.encode(password), nickname);
-        return memberRepository.save(member);
+        return join(username, password, nickname, null);
     }
 
-    // 테스트용
     public Member join(String username, String password, String nickname, String apiKey) {
+
+        if (memberRepository.findByUsername(username).isPresent()) {
+            throw new ServiceException("409-1", "이미 사용중인 아이디입니다.");
+        }
+
         if(apiKey == null) {
             apiKey = UUID.randomUUID().toString();
         }
-
-        findByUsername(username).ifPresent((member) -> {
-            throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
-        });
 
         Member member = new Member(username, passwordEncoder.encode(password), nickname, apiKey);
         return memberRepository.save(member);
@@ -48,8 +43,8 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
-    public Optional<Member> findByApiKey(String apikey) {
-        return memberRepository.findByApiKey(apikey);
+    public Optional<Member> findByApiKey(String apiKey) {
+        return memberRepository.findByApiKey(apiKey);
     }
 
     public String genAccessToken(Member member) {
@@ -67,6 +62,7 @@ public class MemberService {
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
+
     public void checkPassword(String inputPassword, String rawPassword) {
         if(!passwordEncoder.matches(inputPassword, rawPassword)) {
             throw new ServiceException("401-2", "비밀번호가 일치하지 않습니다.");
