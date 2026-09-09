@@ -209,7 +209,6 @@ public class ApiV1PostControllerTest {
         String title = "제목입니다";
         String content = "내용입니다";
 
-        Member actor = memberRepository.findByUsername("user1").get();
 
         ResultActions resultActions = mvc
                 .perform(
@@ -221,7 +220,6 @@ public class ApiV1PostControllerTest {
                                             "content": "%s"
                                         }
                                         """.formatted(title, content))
-                                .cookie(new Cookie("apiKey", actor.getApiKey()))
                 )
                 .andDo(print());
 
