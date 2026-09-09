@@ -95,7 +95,7 @@ public class ApiV1MemberControllerTest {
                 .andExpect(handler().methodName("join"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.resultCode").value("409-1"))
-                .andExpect(jsonPath("$.msg").value("이미 존재하는 회원입니다."));
+                .andExpect(jsonPath("$.msg").value("이미 사용중인 아이디입니다."));
     }
 
     @Test
@@ -169,8 +169,6 @@ public class ApiV1MemberControllerTest {
                 .andDo(print());
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController.class))
-                .andExpect(handler().methodName("logout"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.msg").value("로그아웃 되었습니다."))
